@@ -81,8 +81,8 @@ private:
     inline void calXYZ(const int& i, const int& j, double& x, double& y, double& z);
 
     inline void calNormXY(const int& i, const int& j, double& x, double& y);
-    inline void calThetaAndPhi(double& x, double& y, double& theta, double& phi);
-    inline void calXyzFromThetaPhi(double& theta, double& phi, double& x, double& y, double& z);
+    inline static void calThetaAndPhi(double& x, double& y, double& theta, double& phi);
+    inline static void calXyzFromThetaPhi(double& theta, double& phi, double& x, double& y, double& z);
 
     inline void calCubeFace(const double& theta, const double& phi);
 
@@ -94,14 +94,14 @@ private:
     inline void locateRight( const double& x, const double& y, const double& z, int& xx, int& yy);
 
     // the helper functions
-    inline bool cmpDoubleEqual(        const double &a, const double &b, const double &epsilon);
-    inline bool cmpDoubleSmaller(      const double &a, const double &b, const double &epsilon);
-    inline bool cmpDoubleEqualSmaller( const double &a, const double &b, const double &epsilon);
-    inline bool Cube2CylcmpDoubleLager(const double &a, const double &b, const double &epsilon);
-    inline bool cmpDoubleEqualLager(   const double &a, const double &b, const double &epsilon);
+	inline static bool cmpDoubleEqual( const double &a, const double &b, const double &epsilon );
+	inline static bool cmpDoubleSmaller( const double &a, const double &b, const double &epsilon );
+	inline static bool cmpDoubleEqualSmaller( const double &a, const double &b, const double &epsilon );
+	inline static bool Cube2CylcmpDoubleLager( const double &a, const double &b, const double &epsilon );
+	inline static bool cmpDoubleEqualLager( const double &a, const double &b, const double &epsilon );
 
-    inline void rotRad(double rad, double& x, double& y, double& temp);
-    inline void transDis(double dis, double& x, double& y);
+    inline static void rotRad(double rad, double& x, double& y, double& temp);
+    inline static void transDis(double dis, double& x, double& y);
 
 
     //-------- The temp variables
