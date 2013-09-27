@@ -1,6 +1,7 @@
 //#include "lib/qdbmp/qdbmp.h"
 #include "Cube2Cyl.h"
 #include "Freeimage.h"
+#include <stdio.h>
 
 using namespace std;
 
@@ -38,6 +39,7 @@ int main()
 
 		if( !bmpCube[i] )
         {
+			printf( "Failed to load image %d\n", i );
             return 1;
         }		
     }
@@ -50,6 +52,7 @@ int main()
     // the input images must be square
     if (width != height)
     {
+		printf( "Error: unsopported dimensions.\n" );
         return 1;
     }
 
@@ -64,7 +67,8 @@ int main()
     // create panorama image
     //BMP *output = BMP_Create(panoWidth, panoHeight, depth);
 
-	FIBITMAP* output = FreeImage_AllocateT( FIT_BITMAP, panoWidth, panoHeight );
+	FIBITMAP* output = FreeImage_AllocateT( FIT_BITMAP, panoWidth, panoHeight, 24 );
+	unsigned int bpp = FreeImage_GetBPP( output );
 
     // process
     for (i = 0; i < panoWidth; ++i)
@@ -75,9 +79,15 @@ int main()
 
 			//RGBTRIPLE sample
 			RGBQUAD sample;
-			BOOL xyz = FreeImage_GetPixelColor( bmpCube[algo.cubeFaceId], xx, yy, &sample );
+			BOOL flag1 = FreeImage_GetPixelColor( bmpCube[algo.cubeFaceId], xx, yy, &sample );
 
-			BOOL xyz2 = FreeImage_SetPixelColor( output, i, j, &sample );
+			BOOL flag2 = FreeImage_SetPixelColor( output, i, j, &sample );
+
+			if( flag1 == FALSE || flag2 == FALSE )
+			{
+				printf( "Failed to set pixel color\n" );
+				return 1;
+			}
 
             //BMP_GetPixelRGB(bmpCube[algo.cubeFaceId], xx, yy, &rr, &gg, &bb);
             //BMP_SetPixelRGB(output, i, j, rr, gg, bb);
