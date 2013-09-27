@@ -1,4 +1,4 @@
-#include "lib/qdbmp/qdbmp.h"
+//#include "lib/qdbmp/qdbmp.h"
 #include "Cube2Cyl.h"
 #include "Freeimage.h"
 
@@ -16,6 +16,9 @@ char* cubeNames[CUBE_FACE_NUM] =
 
 int main()
 {
+	FreeImage_Initialise();
+
+
     unsigned int i = 0;
     unsigned int j = 0;
 
@@ -26,25 +29,23 @@ int main()
     unsigned char gg;
     unsigned char bb;
 
-    BMP *bmpCube[CUBE_FACE_NUM];
+	FIBITMAP *bmpCube[CUBE_FACE_NUM];
 
-	FIBITMAP* env = FreeImage_Load( FIF_PFM, "top.bmp" );
-
-    // read the 6 images
+	// read the 6 images
     for (i = 0; i < CUBE_FACE_NUM; ++i)
     {
-        bmpCube[i] = BMP_ReadFile(cubeNames[i]);
+		bmpCube[i] = FreeImage_Load( FIF_BMP, cubeNames[i] );
 
-        if (BMP_GetError() != BMP_OK)
+		if( !bmpCube[i] )
         {
             return 1;
-        }
+        }		
     }
 
 	/* Get image's dimensions */
-	int width  = BMP_GetWidth( bmpCube[0]);
-	int height = BMP_GetHeight(bmpCube[0]);
-    int depth  = BMP_GetDepth( bmpCube[0]);
+	int width = FreeImage_GetWidth( bmpCube[0] );
+	int height = FreeImage_GetHeight( bmpCube[0] );
+    //int depth  = BMP_GetDepth( bmpCube[0]);
 
     // the input images must be square
     if (width != height)
@@ -61,7 +62,9 @@ int main()
     unsigned int panoHeight = algo.pxPanoSizeV;
 
     // create panorama image
-    BMP *output = BMP_Create(panoWidth, panoHeight, depth);
+    //BMP *output = BMP_Create(panoWidth, panoHeight, depth);
+
+	FIBITMAP* output = FreeImage_AllocateT( FIT_BITMAP, panoWidth, panoHeight );
 
     // process
     for (i = 0; i < panoWidth; ++i)
@@ -70,20 +73,29 @@ int main()
         {
             algo.calXY(i, j, xx, yy);
 
-            BMP_GetPixelRGB(bmpCube[algo.cubeFaceId], xx, yy, &rr, &gg, &bb);
+			//RGBTRIPLE sample
+			RGBQUAD sample;
+			BOOL xyz = FreeImage_GetPixelColor( bmpCube[algo.cubeFaceId], xx, yy, &sample );
 
-            BMP_SetPixelRGB(output, i, j, rr, gg, bb);
+			BOOL xyz2 = FreeImage_SetPixelColor( output, i, j, &sample );
+
+            //BMP_GetPixelRGB(bmpCube[algo.cubeFaceId], xx, yy, &rr, &gg, &bb);
+            //BMP_SetPixelRGB(output, i, j, rr, gg, bb);
         }
     }
 
-    BMP_WriteFile(output, "pano.bmp");
+	FreeImage_Save( FIF_BMP, output,"pano.bmp" );
 
-    BMP_Free(output);
+	//BMP_WriteFile(output, );
 
-    for (i = 0; i < CUBE_FACE_NUM; ++i)
+    //BMP_Free(output);
+
+    /*for (i = 0; i < CUBE_FACE_NUM; ++i)
     {
         BMP_Free(bmpCube[i]);
-    }
+    }*/
+
+	FreeImage_DeInitialise();
 
     return 0;
 }
