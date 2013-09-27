@@ -93,7 +93,6 @@
     <ClInclude Include="..\Cube2Cyl.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\lib\qdbmp\qdbmp.c" />
     <ClCompile Include="..\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

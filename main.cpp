@@ -1,4 +1,3 @@
-//#include "lib/qdbmp/qdbmp.h"
 #include "Cube2Cyl.h"
 #include "Freeimage.h"
 #include <stdio.h>
@@ -19,21 +18,10 @@ int main()
 {
 	FreeImage_Initialise();
 
-
-    unsigned int i = 0;
-    unsigned int j = 0;
-
-    int xx = 0;
-    int yy = 0;
-
-    unsigned char rr;
-    unsigned char gg;
-    unsigned char bb;
-
 	FIBITMAP *bmpCube[CUBE_FACE_NUM];
 
 	// read the 6 images
-    for (i = 0; i < CUBE_FACE_NUM; ++i)
+    for (int i = 0; i < CUBE_FACE_NUM; ++i)
     {
 		bmpCube[i] = FreeImage_Load( FIF_BMP, cubeNames[i] );
 
@@ -47,7 +35,6 @@ int main()
 	/* Get image's dimensions */
 	int width = FreeImage_GetWidth( bmpCube[0] );
 	int height = FreeImage_GetHeight( bmpCube[0] );
-    //int depth  = BMP_GetDepth( bmpCube[0]);
 
     // the input images must be square
     if (width != height)
@@ -65,19 +52,18 @@ int main()
     unsigned int panoHeight = algo.pxPanoSizeV;
 
     // create panorama image
-    //BMP *output = BMP_Create(panoWidth, panoHeight, depth);
-
 	FIBITMAP* output = FreeImage_AllocateT( FIT_BITMAP, panoWidth, panoHeight, 24 );
-	unsigned int bpp = FreeImage_GetBPP( output );
 
     // process
-    for (i = 0; i < panoWidth; ++i)
+    for (int i = 0; i < panoWidth; ++i)
     {
-        for (j = 0; j < panoHeight; ++j)
+        for (int j = 0; j < panoHeight; ++j)
         {
+			int xx = 0;
+			int yy = 0;
+
             algo.calXY(i, j, xx, yy);
 
-			//RGBTRIPLE sample
 			RGBQUAD sample;
 			BOOL flag1 = FreeImage_GetPixelColor( bmpCube[algo.cubeFaceId], xx, yy, &sample );
 
@@ -88,22 +74,10 @@ int main()
 				printf( "Failed to set pixel color\n" );
 				return 1;
 			}
-
-            //BMP_GetPixelRGB(bmpCube[algo.cubeFaceId], xx, yy, &rr, &gg, &bb);
-            //BMP_SetPixelRGB(output, i, j, rr, gg, bb);
         }
     }
 
 	FreeImage_Save( FIF_BMP, output,"pano.bmp" );
-
-	//BMP_WriteFile(output, );
-
-    //BMP_Free(output);
-
-    /*for (i = 0; i < CUBE_FACE_NUM; ++i)
-    {
-        BMP_Free(bmpCube[i]);
-    }*/
 
 	FreeImage_DeInitialise();
 
