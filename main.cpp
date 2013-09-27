@@ -1,5 +1,6 @@
 #include "lib/qdbmp/qdbmp.h"
 #include "Cube2Cyl.h"
+#include "Freeimage.h"
 
 using namespace std;
 
@@ -26,6 +27,8 @@ int main()
     unsigned char bb;
 
     BMP *bmpCube[CUBE_FACE_NUM];
+
+	FIBITMAP* env = FreeImage_Load( FIF_PFM, "top.bmp" );
 
     // read the 6 images
     for (i = 0; i < CUBE_FACE_NUM; ++i)
