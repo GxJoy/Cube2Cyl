@@ -32,11 +32,9 @@
 
 #include <math.h>
 
-#ifndef M_PI
-#define M_PI        3.14159265358979323846
-#define M_PI_2      1.57079632679489661923
-#define M_PI_4      0.78539816339744830962
-#endif
+const double M_PI =   3.14159265358979323846;
+const double M_PI_2 = 1.57079632679489661923;
+const double M_PI_4 = 0.78539816339744830962;
 
 enum CUBE_FACES
 {
@@ -71,16 +69,16 @@ public:
     void init(unsigned int pxInW, double radInV, double radInH);
     void init(unsigned int pxPanoH, unsigned int pxPanoV, unsigned int pxInW, double radInV, double radInH);
 
-    inline void calXY(const int& i, const int& j, int& xx, int& yy);
+    inline void calXY(const double& i, const double& j, int& xx, int& yy);
 
     Cube2Cyl(void);
     ~Cube2Cyl(void);
 
 private:
 
-    inline void calXYZ(const int& i, const int& j, double& x, double& y, double& z);
+    inline void calXYZ(const double& i, const double& j, double& x, double& y, double& z);
 
-    inline void calNormXY(const int& i, const int& j, double& x, double& y);
+    inline void calNormXY(const double& i, const double& j, double& x, double& y);
     inline static void calThetaAndPhi(double& x, double& y, double& theta, double& phi);
     inline static void calXyzFromThetaPhi(double& theta, double& phi, double& x, double& y, double& z);
 
@@ -226,7 +224,7 @@ inline void Cube2Cyl::transDis(double dis, double& x, double& y)
  * \return void
  *
  */
-inline void Cube2Cyl::calXY(const int& i, const int& j, int& xx, int& yy)
+inline void Cube2Cyl::calXY(const double& i, const double& j, int& xx, int& yy)
 {
     calXYZ(i, j, tX, tY, tZ);
 
@@ -504,7 +502,7 @@ inline void Cube2Cyl::calCubeFace(const double& theta, const double& phi)
  * \return void
  *
  */
-inline void Cube2Cyl::calXYZ(const int& i, const int& j, double& x, double& y, double& z)
+inline void Cube2Cyl::calXYZ(const double& i, const double& j, double& x, double& y, double& z)
 {
     calNormXY(i, j, x, y);
     calThetaAndPhi(x, y, tTheta, tPhi);
@@ -513,7 +511,7 @@ inline void Cube2Cyl::calXYZ(const int& i, const int& j, double& x, double& y, d
     calCubeFace(tTheta, tPhi);
 }
 
-inline void Cube2Cyl::calNormXY(const int& i, const int& j, double& x, double& y)
+inline void Cube2Cyl::calNormXY(const double& i, const double& j, double& x, double& y)
 {
     x = ((2.0*i)/pxPanoSizeH - 1.0) * normFactorX;
     y = ((2.0*j)/pxPanoSizeV - 1.0) * normFactorY;

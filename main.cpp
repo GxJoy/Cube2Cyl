@@ -55,26 +55,51 @@ int main()
 	FIBITMAP* output = FreeImage_AllocateT( FIT_BITMAP, panoWidth, panoHeight, 24 );
 
     // process
-    for (int i = 0; i < panoWidth; ++i)
+	const int boxSamples = 3; //side-length, 2 = 4xAA, 3=9xAA, etc
+    for( unsigned int i = 0; i < panoWidth; ++i)
     {
-        for (int j = 0; j < panoHeight; ++j)
+		
+		for( unsigned int j = 0; j < panoHeight; ++j )
         {
-			int xx = 0;
-			int yy = 0;
+			int accumColors[3] = { 0, 0, 0 }; //note: if using more than 2^(32-4) samples, this may overflow on white images
 
-            algo.calXY(i, j, xx, yy);
-
-			RGBQUAD sample;
-			BOOL flag1 = FreeImage_GetPixelColor( bmpCube[algo.cubeFaceId], xx, yy, &sample );
-
-			BOOL flag2 = FreeImage_SetPixelColor( output, i, j, &sample );
-
-			if( flag1 == FALSE || flag2 == FALSE )
+			for( int sampleX = 0; sampleX < boxSamples; sampleX++ )
 			{
-				printf( "Failed to set pixel color\n" );
+				for( int sampleY = 0; sampleY < boxSamples; sampleY++ )
+				{
+					int xx = 0;
+					int yy = 0;
+					RGBQUAD sample;
+
+					double ii = i;
+					double jj = j;
+					ii += (double) sampleX / (double) boxSamples;
+					jj += (double) sampleY / (double) boxSamples;
+
+					algo.calXY( ii, jj, xx, yy );
+
+					if( !FreeImage_GetPixelColor( bmpCube[algo.cubeFaceId], xx, yy, &sample ) )
+					{
+						printf( "Failed to get pixel color\n" );
+						return 1;
+					}
+					accumColors[0] += sample.rgbRed;
+					accumColors[1] += sample.rgbGreen;
+					accumColors[2] += sample.rgbBlue;
+				}
+			}
+			RGBQUAD generated;
+			generated.rgbRed = accumColors[0] / ( boxSamples * boxSamples );
+			generated.rgbGreen = accumColors[1] / ( boxSamples * boxSamples );
+			generated.rgbBlue = accumColors[2] / ( boxSamples * boxSamples );
+
+			if( !FreeImage_SetPixelColor( output, i, j, &generated ) )
+			{
+				printf( "Failed to set pixel color 2\n" );
 				return 1;
 			}
         }
+
     }
 
 	FreeImage_Save( FIF_BMP, output,"pano.bmp" );
