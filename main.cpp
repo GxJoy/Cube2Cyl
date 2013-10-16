@@ -55,10 +55,12 @@ int main()
 	FIBITMAP* output = FreeImage_AllocateT( FIT_BITMAP, panoWidth, panoHeight, 24 );
 
     // process
+	//Note that I'm not bothering with any gamma-correct sampling - assuming (usually falsely) that the image in linear color-space.
+	//to add gamma-correction, convert the samples to linear color space, then do the averaging, then convert the result to gamma-space
+	//Note that the AA algorithm is a naive non-jittered box filter. For better results, see other AA filters and scaling algorithms.
 	const int boxSamples = 3; //side-length, 2 = 4xAA, 3=9xAA, etc
     for( unsigned int i = 0; i < panoWidth; ++i)
     {
-		
 		for( unsigned int j = 0; j < panoHeight; ++j )
         {
 			int accumColors[3] = { 0, 0, 0 }; //note: if using more than 2^(32-4) samples, this may overflow on white images
@@ -89,9 +91,10 @@ int main()
 				}
 			}
 			RGBQUAD generated;
-			generated.rgbRed = accumColors[0] / ( boxSamples * boxSamples );
-			generated.rgbGreen = accumColors[1] / ( boxSamples * boxSamples );
-			generated.rgbBlue = accumColors[2] / ( boxSamples * boxSamples );
+			int totalSamples = ( boxSamples * boxSamples );
+			generated.rgbRed = accumColors[0] / totalSamples;
+			generated.rgbGreen = accumColors[1] / totalSamples;
+			generated.rgbBlue = accumColors[2] / totalSamples;
 
 			if( !FreeImage_SetPixelColor( output, i, j, &generated ) )
 			{
