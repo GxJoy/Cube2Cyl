@@ -3,7 +3,7 @@ Cube2Cyl
 
 Forked from https://github.com/madwyn/Cube2Cyl.
 
-A panoramic lib, cubic to cylindrical projection conversion
+A panoramic lib, cubic to equirectangular projection conversion (X, Y represent the angles inside a sphere)
 
 Read more details of implementation here: http://www.wenyanan.com/cube2cyl/
 
